@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAC Food — Menu</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Bebas+Neue&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --dark: #111111;
+    --card: #181818;
+    --border: #2a2a2a;
+    --orange: #FF6B1A;
+    --orange-light: #FF8C42;
+    --orange-glow: rgba(255, 107, 26, 0.15);
+    --orange-dim: rgba(255, 107, 26, 0.08);
+    --gold: #C9A96E;
+    --white: #F5F0EB;
+    --muted: #8a8a8a;
+    --text: #E8E0D5;
+  }
+ 
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+ 
+  html { scroll-behavior: smooth; }
+ 
+  body {
+    background-color: var(--black);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    overflow-x: hidden;
+  }
+ 
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+ 
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(255,107,26,0.12) 0%, transparent 70%),
+                var(--black);
+  }
+ 
+  .hero-bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+  }
+  .hero-bg-circle:nth-child(1) {
+    width: 600px; height: 600px;
+    background: rgba(255,107,26,0.08);
+    top: -200px; left: -100px;
+    animation: drift1 12s ease-in-out infinite alternate;
+  }
+  .hero-bg-circle:nth-child(2) {
+    width: 400px; height: 400px;
+    background: rgba(201,169,110,0.05);
+    bottom: -100px; right: -50px;
+    animation: drift2 15s ease-in-out infinite alternate;
+  }
+ 
+  @keyframes drift1 { to { transform: translate(40px, 30px); } }
+  @keyframes drift2 { to { transform: translate(-30px, -20px); } }
+ 
+  .hero-logo {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    animation: fadeUp 1s ease both;
+  }
+ 
+  .hero-logo .brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 18vw, 12rem);
+    letter-spacing: 0.08em;
+    line-height: 0.9;
+    background: linear-gradient(135deg, var(--orange) 0%, var(--orange-light) 50%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 40px rgba(255,107,26,0.4));
+  }
+ 
+  .hero-logo .subtitle {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(0.9rem, 3vw, 1.4rem);
+    letter-spacing: 0.5em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+ 
+  .hero-logo .tagline {
+    font-size: 0.85rem;
+    color: var(--orange);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-top: 20px;
+    padding: 8px 24px;
+    border: 1px solid rgba(255,107,26,0.3);
+    display: inline-block;
+    border-radius: 2px;
+  }
+ 
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    animation: pulse 2s ease-in-out infinite;
+    z-index: 1;
+  }
+  .scroll-hint::after {
+    content: '';
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--orange), transparent);
+    display: block;
+  }
+ 
+  @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+ 
+  /* ── NAV ── */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+ 
+  .nav-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    color: var(--orange);
+    letter-spacing: 0.1em;
+    margin-right: 16px;
+    flex-shrink: 0;
+  }
+ 
+  .nav a {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 20px 14px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .nav a:hover {
+    color: var(--orange);
+    border-bottom-color: var(--orange);
+  }
+ 
+  /* ── SECTION ── */
+  section {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 24px;
+  }
+ 
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    margin-bottom: 52px;
+  }
+ 
+  .section-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 5rem;
+    line-height: 1;
+    color: var(--border);
+    letter-spacing: -0.02em;
+  }
+ 
+  .section-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    color: var(--orange);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1;
+  }
+ 
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--orange), transparent);
+    margin-bottom: 12px;
+  }
+ 
+  /* ── DIVIDER BETWEEN SECTIONS ── */
+  .section-divider {
+    position: relative;
+    z-index: 1;
+    height: 1px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+  }
+ 
+  /* ── GRID LAYOUTS ── */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+ 
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+  }
+ 
+  /* ── MENU ITEM CARD ── */
+  .item-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+ 
+  .item-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--orange-dim);
+    opacity: 0;
+    transition: opacity 0.25s;
+    border-radius: 12px;
+  }
+ 
+  .item-card:hover {
+    border-color: rgba(255,107,26,0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(255,107,26,0.12);
+  }
+  .item-card:hover::before { opacity: 1; }
+ 
+  .item-info { position: relative; flex: 1; }
+ 
+  .item-name {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+ 
+  .item-desc {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.5;
+    font-style: italic;
+  }
+ 
+  .item-price {
+    position: relative;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: var(--orange);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+ 
+  .item-price .currency {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    display: block;
+    text-align: right;
+    margin-top: -2px;
+  }
+ 
+  /* ── SPECIAL OFFER BLOCK ── */
+  .special-offer-block {
+    background: linear-gradient(135deg, var(--orange) 0%, #cc4f00 100%);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 48px 0;
+    position: relative;
+    overflow: hidden;
+  }
+ 
+  .special-offer-block::before {
+    content: 'SPECIAL OFFER';
+    position: absolute;
+    top: 50%;
+    right: -20px;
+    transform: translateY(-50%) rotate(90deg);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 5rem;
+    color: rgba(255,255,255,0.05);
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+ 
+  .special-offer-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 0.2em;
+    color: var(--black);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .special-offer-title::before {
+    content: '★';
+    font-size: 1.2rem;
+  }
+ 
+  .special-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+  }
+ 
+  .special-item {
+    background: rgba(0,0,0,0.25);
+    border-radius: 8px;
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+ 
+  .special-item .name {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--white);
+  }
+ 
+  .special-item .price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    color: var(--black);
+    background: var(--white);
+    padding: 2px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+ 
+  /* ── PIZZA SECTION ── */
+  .pizza-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 26px;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+ 
+  .pizza-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--orange), transparent);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+ 
+  .pizza-card:hover {
+    border-color: rgba(255,107,26,0.35);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(255,107,26,0.1);
+  }
+  .pizza-card:hover::after { opacity: 1; }
+ 
+  .pizza-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+ 
+  .pizza-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--white);
+  }
+ 
+  .pizza-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    color: var(--orange);
+    letter-spacing: 0.05em;
+  }
+ 
+  .pizza-ingredients {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.5;
+  }
+ 
+  /* ── PETIT DEJ ── */
+  .petit-dej-offer {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s;
+  }
+ 
+  .petit-dej-offer:hover {
+    border-color: rgba(255,107,26,0.3);
+    box-shadow: 0 8px 30px rgba(255,107,26,0.08);
+  }
+ 
+  .offer-badge {
+    display: inline-block;
+    background: var(--orange);
+    color: var(--black);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    padding: 4px 12px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+ 
+  .offer-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+ 
+  .offer-price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+ 
+  .offer-price-tag {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.4rem;
+    color: var(--orange);
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+ 
+  .offer-includes {
+    font-size: 0.77rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 70%;
+  }
+ 
+  /* ── DRINKS ── */
+  .drink-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    gap: 12px;
+    transition: all 0.2s;
+  }
+ 
+  .drink-item:last-child { border-bottom: none; }
+ 
+  .drink-item:hover .drink-name { color: var(--orange); }
+ 
+  .drink-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text);
+    transition: color 0.2s;
+  }
+ 
+  .drink-dots {
+    flex: 1;
+    border-bottom: 1px dotted var(--border);
+    margin: 0 10px;
+  }
+ 
+  .drink-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.25rem;
+    color: var(--orange);
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+ 
+  /* ── DRINKS PANEL ── */
+  .drinks-panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px 28px;
+  }
+ 
+  .panel-heading {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.2em;
+    color: var(--orange);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+ 
+  .panel-heading::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 16px;
+    background: var(--orange);
+    border-radius: 2px;
+  }
+ 
+  /* ── COCKTAIL / JUS CARD ── */
+  .juice-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    transition: all 0.25s;
+  }
+ 
+  .juice-card:hover {
+    border-color: rgba(255,107,26,0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(255,107,26,0.1);
+  }
+ 
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 60px 24px;
+    background: linear-gradient(to top, rgba(255,107,26,0.05), transparent);
+    border-top: 1px solid var(--border);
+  }
+ 
+  .footer-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    background: linear-gradient(135deg, var(--orange), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+ 
+  .footer-info {
+    color: var(--muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+  }
+ 
+  .footer-contact {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+ 
+  .footer-contact span { display: flex; align-items: center; gap: 6px; }
+  .footer-contact .icon { color: var(--orange); font-size: 1rem; }
+ 
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+ 
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.6s ease both;
+  }
+ 
+  /* ── COLS LAYOUT ── */
+  .cols-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+ 
+  @media (max-width: 700px) {
+    .cols-layout { grid-template-columns: 1fr; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .section-number { display: none; }
+  }
+ 
+  /* ── TAG BADGES ── */
+  .tag {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 3px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .tag-hot { background: rgba(255,80,30,0.2); color: #ff6030; }
+  .tag-new { background: rgba(201,169,110,0.2); color: var(--gold); }
+  .tag-pop { background: rgba(255,107,26,0.15); color: var(--orange); }
+</style>
+</head>
+<body>
+ 
+<!-- ══════════════════════════════ HERO ══════════════════════════════ -->
+<div class="hero">
+  <div class="hero-bg-circle"></div>
+  <div class="hero-bg-circle"></div>
+  <div class="hero-logo">
+    <div class="brand">MAC</div>
+    <div class="subtitle">Coffee &amp; Food</div>
+    <div class="tagline">KASSERINE · Open Daily</div>
+  </div>
+  <div class="scroll-hint">Menu</div>
+</div>
+ 
+<!-- ══════════════════════════════ NAV ══════════════════════════════ -->
+<nav class="nav">
+  <div class="nav-brand">MAC</div>
+  <a href="#petit-dej">Petit Déj</a>
+  <a href="#plats">Plats MAC</a>
+  <a href="#pizza">Pizza</a>
+  <a href="#sandwiches">Sandwiches</a>
+  <a href="#cafe">Café</a>
+  <a href="#jus">Jus &amp; Cocktails</a>
+  <a href="#glaces">Glaces &amp; Crêpes</a>
+</nav>
+ 
+ 
+<!-- ══════════════════════ PETIT DÉJEUNER ══════════════════════════ -->
+<section id="petit-dej">
+  <div class="section-header">
+    <div class="section-number">01</div>
+    <div class="section-title-group">
+      <div class="section-label">Chaque matin · 7h–12h</div>
+      <div class="section-title">Petit Déjeuner</div>
+    </div>
+    <div class="section-line"></div>
+  </div>
+ 
+  <!-- Formules -->
+  <div class="grid-2" style="margin-bottom:24px;">
+    <div class="petit-dej-offer">
+      <div class="offer-badge">Express</div>
+      <div class="offer-title">Express</div>
+      <div class="offer-includes">Café aux choix · Jus Frais · Viennoiseries</div>
+      <div class="offer-price-row">
+        <div class="offer-price-tag">5000</div>
+        <div style="font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;">MLL</div>
+      </div>
+    </div>
+ 
+    <div class="petit-dej-offer">
+      <div class="offer-badge">Continental Sucré</div>
+      <div class="offer-title">Continental Sucré</div>
+      <div class="offer-includes">Café aux choix · Jus Frais · Viennoiseries · Œuf · Confiture · Miel · Pain · Beurre · Eau 1/2L · Yaourt</div>
+      <div class="offer-price-row">
+        <div class="offer-price-tag">8000</div>
+        <div style="font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;">MLL</div>
+      </div>
+    </div>
+ 
+    <div class="petit-dej-offer">
+      <div class="offer-badge">Continental Salé</div>
+      <div class="offer-title">Continental Salé</div>
+      <div class="offer-includes">Café aux choix · Jus Frais · Viennoiseries · Œuf · Confiture · Miel · Pain · Beurre · Eau 1L · Yaourt</div>
+      <div class="offer-price-row">
+        <div class="offer-price-tag">8000</div>
+        <div style="font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;">MLL</div>
+      </div>
+    </div>
+ 
+    <div class="petit-dej-offer" style="border-color:rgba(255,107,26,0.4);background:linear-gradient(135deg,rgba(255,107,26,0.08),var(--card));">
+      <div class="offer-badge">⭐ Special Offer</div>
+      <div class="offer-title">Special MAC</div>
+      <div class="offer-includes">Café aux choix · Jus Frais · Salami · Viennoiseries · Œuf · Confiture · Miel · Pain · Jonbon · Beurre · Eau 1L · Yaourt · Fromage · Huile d'olive · Salade Fruit</div>
+      <div class="offer-price-row">
+        <div class="offer-price-tag" style="font-size:2.8rem;">14000</div>
+        <div style="font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;">MLL</div>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- Pièces individuelles -->
+  <div style="margin-top:40px;">
+    <div class="panel-heading">À la pièce</div>
+    <div class="grid-3">
+      <div class="item-card">
+        <div class="item-info"><div class="item-name">Croissant</div></div>
+        <div class="item-price">1200<span class="currency">MLL</span></div>
+      </div>
+      <div class="item-card">
+        <div class="item-info"><div class="item-name">Pain Chocolat</div></div>
+        <div class="item-price">1500<span class="currency">MLL</span></div>
+      </div>
+      <div class="item-card">
+        <div class="item-info"><div class="item-name">Gâteaux</div></div>
+        <div class="item-price">2500<span class="currency">MLL</span></div>
+      </div>
+      <div class="item-card">
+        <div class="item-info"><div class="item-name">Gâteaux Mousse</div></div>
+        <div class="item-price">3500<span class="currency">MLL</span></div>
+      </div>
+      <div class="item-card">
+        <div class="item-info"><div class="item-name">Jwejem</div></div>
+        <div class="item-price">6000<span class="currency">MLL</span></div>
+      </div>
+      <div class="item-card">
+        <div class="item-info"><div class="item-name">Jwejem MAC <span class="tag tag-pop">POP</span></div></div>
+        <div class="item-price">10000<span class="currency">MLL</span></div>
+      </div>
+      <div class="item-card">
+        <div class="item-info"><div class="item-name">Gouffre</div></div>
+        <div class="item-price">6000<span class="currency">MLL</span></div>
+      </div>
+      <div class="item-card">
+        <div class="item-info"><div class="item-name">Gouffre MAC <span class="tag tag-hot">HOT</span></div></div>
+        <div class="item-price">10000<span class="currency">MLL</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<div class="section-divider"></div>
+ 
+<!-- ══════════════════════ PLATS MAC ══════════════════════════ -->
+<section id="plats">
+  <div class="section-header">
+    <div class="section-number">02</div>
+    <div class="section-title-group">
+      <div class="section-label">Nos Plats Chauds</div>
+      <div class="section-title">Plats MAC</div>
+    </div>
+    <div class="section-line"></div>
+  </div>
+ 
+  <div class="grid-2">
+    <div class="item-card">
+      <div class="item-info"><div class="item-name">Plat Mergez</div></div>
+      <div class="item-price">9000<span class="currency">MLL</span></div>
+    </div>
+    <div class="item-card">
+      <div class="item-info"><div class="item-name">Escalope Grillé</div></div>
+      <div class="item-price">9000<span class="currency">MLL</span></div>
+    </div>
+    <div class="item-card">
+      <div class="item-info"><div class="item-name">Escalope Pannée</div></div>
+      <div class="item-price">10000<span class="currency">MLL</span></div>
+    </div>
+    <div class="item-card">
+      <div class="item-info"><div class="item-name">1/4 Poulet Grillé</div></div>
+      <div class="item-price">8000<span class="currency">MLL</span></div>
+    </div>
+    <div class="item-card">
+      <div class="item-info"><div class="item-name">Poulet Roti</div></div>
+      <div class="item-price">7000<span class="currency">MLL</span></div>
+    </div>
+    <div class="item-card">
+      <div class="item-info"><div class="item-name">Cordon Bleu <span class="tag tag-pop">POP</span></div></div>
+      <div class="item-price">9000<span class="currency">MLL</span></div>
+    </div>
+    <div class="item-card">
+      <div class="item-info"><div class="item-name">Grillade Mixte <span class="tag tag-hot">HOT</span></div></div>
+      <div class="item-price">14000<span class="currency">MLL</span></div>
+    </div>
+    <div class="item-card">
+      <div class="item-info"><div class="item-name">Poisson Grillé</div></div>
+      <div class="item-price">14000<span class="currency">MLL</span></div>
+    </div>
+    <div class="item-card">
+      <div class="item-info"><div class="item-name">Plat Chawarma</div></div>
+      <div class="item-price">9000<span class="currency">MLL</span></div>
+    </div>
+  </div>
+ 
+  <!-- Special Offer Plats -->
+  <div class="special-offer-block" style="margin-top:40px;">
+    <div class="special-offer-title">Special Offer</div>
+    <div class="special-grid">
+      <div class="special-item"><span class="name">Lazagne</span><span class="price">10000</span></div>
+      <div class="special-item"><span class="name">Spaghetti Fruit de Mer</span><span class="price">12000</span></div>
+      <div class="special-item"><span class="name">Spaghetti Bolognaise</span><span class="price">12000</span></div>
+      <div class="special-item"><span class="name">Chich Kabeb</span><span class="price">9000</span></div>
+      <div class="special-item"><span class="name">Ojja Merguez</span><span class="price">8000</span></div>
+      <div class="special-item"><span class="name">Ojja Escalope</span><span class="price">9000</span></div>
+      <div class="special-item"><span class="name">Ojja Mixte</span><span class="price">10000</span></div>
+    </div>
+  </div>
+</section>
+ 
+<div class="section-divider"></div>
+ 
+<!-- ══════════════════════ PIZZA ══════════════════════════ -->
+<section id="pizza">
+  <div class="section-header">
+    <div class="section-number">03</div>
+    <div class="section-title-group">
+      <div class="section-label">Fours à bois</div>
+      <div class="section-title">Menu Pizza</div>
+    </div>
+    <div class="section-line"></div>
+  </div>
+ 
+  <div class="grid-2">
+    <div class="pizza-card">
+      <div class="pizza-header">
+        <div class="pizza-name">Margherita</div>
+        <div class="pizza-price">6000</div>
+      </div>
+      <div class="pizza-ingredients">Sauce Tomate · Mozzarella · Oignon</div>
+    </div>
+    <div class="pizza-card">
+      <div class="pizza-header">
+        <div class="pizza-name">Mexicaine <span class="tag tag-hot">HOT</span></div>
+        <div class="pizza-price">9000</div>
+      </div>
+      <div class="pizza-ingredients">Sauce · Mozzarella · Escalope · Olive</div>
+    </div>
+    <div class="pizza-card">
+      <div class="pizza-header">
+        <div class="pizza-name">Neptune</div>
+        <div class="pizza-price">8000</div>
+      </div>
+      <div class="pizza-ingredients">Sauce Tomate · Fromage · Thon · Olive</div>
+    </div>
+    <div class="pizza-card">
+      <div class="pizza-header">
+        <div class="pizza-name">Végétarienne</div>
+        <div class="pizza-price">7000</div>
+      </div>
+      <div class="pizza-ingredients">Sauce · Fromage · Champignon · Légume</div>
+    </div>
+    <div class="pizza-card">
+      <div class="pizza-header">
+        <div class="pizza-name">Regéna</div>
+        <div class="pizza-price">9000</div>
+      </div>
+      <div class="pizza-ingredients">Sauce · Champignon · Mozzarella · Thon · Olive</div>
+    </div>
+    <div class="pizza-card">
+      <div class="pizza-header">
+        <div class="pizza-name">Royal</div>
+        <div class="pizza-price">9500</div>
+      </div>
+      <div class="pizza-ingredients">Sauce · Mozzarella · Champignon · Jambon</div>
+    </div>
+    <div class="pizza-card">
+      <div class="pizza-header">
+        <div class="pizza-name">Tunisienne <span class="tag tag-pop">POP</span></div>
+        <div class="pizza-price">10000</div>
+      </div>
+      <div class="pizza-ingredients">Sauce Tomate · Champignon · Mozzarella · Merguez · Œuf · Olive · Légume</div>
+    </div>
+    <div class="pizza-card">
+      <div class="pizza-header">
+        <div class="pizza-name">4-Saisons</div>
+        <div class="pizza-price">10000</div>
+      </div>
+      <div class="pizza-ingredients">Sauce Tomate · Champignon · Mozzarella · Fromage · Thon · Jambon</div>
+    </div>
+  </div>
+ 
+  <!-- Special Pizza -->
+  <div class="special-offer-block" style="margin-top:40px;">
+    <div class="special-offer-title">Special Offer</div>
+    <div class="special-grid">
+      <div class="special-item"><span class="name">Pizza à patte</span><span class="price">12000</span></div>
+      <div class="special-item"><span class="name">Fruit de Mer</span><span class="price">14000</span></div>
+      <div class="special-item"><span class="name">Pizza M.A.C</span><span class="price">14000</span></div>
+    </div>
+  </div>
+</section>
+ 
+<div class="section-divider"></div>
+ 
+<!-- ══════════════════════ SANDWICHES ══════════════════════════ -->
+<section id="sandwiches">
+  <div class="section-header">
+    <div class="section-number">04</div>
+    <div class="section-title-group">
+      <div class="section-label">Street &amp; Snacks</div>
+      <div class="section-title">Sandwiches</div>
+    </div>
+    <div class="section-line"></div>
+  </div>
+ 
+  <div class="cols-layout" style="gap:32px;margin-bottom:32px;">
+    <!-- Tacos MAC -->
+    <div>
+      <div class="panel-heading">Tacos M.A.C</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="item-card"><div class="item-info"><div class="item-name">Tacos</div></div><div class="item-price">7000<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Tacos Viande Hachée</div></div><div class="item-price">10000<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Baguette Farcé</div></div><div class="item-price">6000<span class="currency">MLL</span></div></div>
+      </div>
+ 
+      <div class="panel-heading" style="margin-top:24px;">Makloub</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="item-card"><div class="item-info"><div class="item-name">Escalope Pannée</div></div><div class="item-price">5500<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Chawarma / Escalope</div></div><div class="item-price">5000<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Makloub Thon</div></div><div class="item-price">5000<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Makloub Spécial<span class="tag tag-pop">POP</span></div><div class="item-desc">Fromage · Salami · Jonbon · Œuf</div></div><div class="item-price">6000<span class="currency">MLL</span></div></div>
+      </div>
+    </div>
+ 
+    <!-- Tabouna + Panini -->
+    <div>
+      <div class="panel-heading">Tabouna</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="item-card"><div class="item-info"><div class="item-name">Kwika</div></div><div class="item-price">3500<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Thon</div></div><div class="item-price">4000<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Escalope</div></div><div class="item-price">4000<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Chawarma</div></div><div class="item-price">4000<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Spécial</div></div><div class="item-price">5000<span class="currency">MLL</span></div></div>
+      </div>
+ 
+      <div class="panel-heading" style="margin-top:24px;">Panini</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="item-card"><div class="item-info"><div class="item-name">Fromage Thon</div></div><div class="item-price">4500<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Fromage Jonbon</div></div><div class="item-price">3500<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Escalope</div></div><div class="item-price">4500<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Spécial<span class="tag tag-new">NEW</span></div><div class="item-desc">Fromage · Thon · Jonbon</div></div><div class="item-price">4000<span class="currency">MLL</span></div></div>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- Row 2 : Hamburgers / Libanaise / Omelettes / Cornet / Crépes -->
+  <div class="cols-layout" style="gap:32px;margin-top:8px;">
+    <div>
+      <div class="panel-heading">Hamburgers</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="item-card"><div class="item-info"><div class="item-name">Cheese Burger</div></div><div class="item-price">6000<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Chicken Burger</div></div><div class="item-price">6500<span class="currency">MLL</span></div></div>
+      </div>
+ 
+      <div class="panel-heading" style="margin-top:24px;">Libanaise</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="item-card"><div class="item-info"><div class="item-name">Escalope Pannée</div></div><div class="item-price">5500<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Chawarma / Escalope</div></div><div class="item-price">5000<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Libanaise Thon</div></div><div class="item-price">5000<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Libanaise Spécial</div></div><div class="item-price">6000<span class="currency">MLL</span></div></div>
+      </div>
+ 
+      <div class="panel-heading" style="margin-top:24px;">Crêpes Salées</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="item-card"><div class="item-info"><div class="item-name">Crêpe Fromage</div></div><div class="item-price">3000<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Fromage · Thon</div></div><div class="item-price">4500<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Crêpe Spécial</div></div><div class="item-price">6000<span class="currency">MLL</span></div></div>
+      </div>
+    </div>
+ 
+    <div>
+      <div class="panel-heading">Omelettes</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="item-card"><div class="item-info"><div class="item-name">Omelette Fromage</div></div><div class="item-price">4000<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Omelette Fromage Thon</div></div><div class="item-price">4500<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Omelette Fromage Thon Jonbon</div></div><div class="item-price">6500<span class="currency">MLL</span></div></div>
+      </div>
+ 
+      <div class="panel-heading" style="margin-top:24px;">Cornet</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="item-card"><div class="item-info"><div class="item-name">Escalope Pannée</div></div><div class="item-price">6000<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Chawarma / Escalope</div></div><div class="item-price">6500<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Cornet Thon</div></div><div class="item-price">6500<span class="currency">MLL</span></div></div>
+        <div class="item-card"><div class="item-info"><div class="item-name">Cornet Spécial<span class="tag tag-pop">POP</span></div><div class="item-desc">Fromage · Salami · Jonbon · Œuf</div></div><div class="item-price">7000<span class="currency">MLL</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<div class="section-divider"></div>
+ 
+<!-- ══════════════════════ CAFÉ ══════════════════════════ -->
+<section id="cafe">
+  <div class="section-header">
+    <div class="section-number">05</div>
+    <div class="section-title-group">
+      <div class="section-label">Caffè MAC</div>
+      <div class="section-title">Café &amp; Boissons</div>
+    </div>
+    <div class="section-line"></div>
+  </div>
+ 
+  <div class="cols-layout" style="gap:24px;">
+    <!-- Cafés -->
+    <div>
+      <div class="drinks-panel">
+        <div class="panel-heading">Nos Cafés</div>
+        <div class="drink-item"><span class="drink-name">Express</span><div class="drink-dots"></div><span class="drink-price">1800</span></div>
+        <div class="drink-item"><span class="drink-name">Américain</span><div class="drink-dots"></div><span class="drink-price">2000</span></div>
+        <div class="drink-item"><span class="drink-name">Capucin</span><div class="drink-dots"></div><span class="drink-price">2200</span></div>
+        <div class="drink-item"><span class="drink-name">Café Crème</span><div class="drink-dots"></div><span class="drink-price">2600</span></div>
+        <div class="drink-item"><span class="drink-name">Chocolat au Lait</span><div class="drink-dots"></div><span class="drink-price">2000</span></div>
+        <div class="drink-item"><span class="drink-name">Café Turc</span><div class="drink-dots"></div><span class="drink-price">2000</span></div>
+        <div class="drink-item"><span class="drink-name">Hot Chocolat</span><div class="drink-dots"></div><span class="drink-price">3500</span></div>
+        <div class="drink-item"><span class="drink-name">Cappuccino</span><div class="drink-dots"></div><span class="drink-price">5000</span></div>
+        <div class="drink-item"><span class="drink-name">Café M.A.C <span class="tag tag-pop" style="font-size:0.6rem;">SIGNATURE</span></span><div class="drink-dots"></div><span class="drink-price">8000</span></div>
+      </div>
+ 
+      <div class="drinks-panel" style="margin-top:20px;">
+        <div class="panel-heading">Lavazza</div>
+        <div class="drink-item"><span class="drink-name">Express Lavazza</span><div class="drink-dots"></div><span class="drink-price">3000</span></div>
+        <div class="drink-item"><span class="drink-name">Capucin Lavazza</span><div class="drink-dots"></div><span class="drink-price">3500</span></div>
+        <div class="drink-item"><span class="drink-name">Café Crème Lavazza</span><div class="drink-dots"></div><span class="drink-price">4000</span></div>
+      </div>
+    </div>
+ 
+    <!-- Sodas + Thés + Eau -->
+    <div>
+      <div class="drinks-panel">
+        <div class="panel-heading">Sodas</div>
+        <div class="drink-item"><span class="drink-name">Soda</span><div class="drink-dots"></div><span class="drink-price">1900</span></div>
+        <div class="drink-item"><span class="drink-name">Orangina</span><div class="drink-dots"></div><span class="drink-price">2500</span></div>
+        <div class="drink-item"><span class="drink-name">Pétillante</span><div class="drink-dots"></div><span class="drink-price">2500</span></div>
+        <div class="drink-item"><span class="drink-name">Shark <span class="tag tag-hot">HOT</span></span><div class="drink-dots"></div><span class="drink-price">8000</span></div>
+      </div>
+ 
+      <div class="drinks-panel" style="margin-top:20px;">
+        <div class="panel-heading">Nos Thés</div>
+        <div class="drink-item"><span class="drink-name">Thé à la Menthe</span><div class="drink-dots"></div><span class="drink-price">1800</span></div>
+        <div class="drink-item"><span class="drink-name">Amande</span><div class="drink-dots"></div><span class="drink-price">4500</span></div>
+        <div class="drink-item"><span class="drink-name">Pignons</span><div class="drink-dots"></div><span class="drink-price">6000</span></div>
+        <div class="drink-item"><span class="drink-name">Mixte</span><div class="drink-dots"></div><span class="drink-price">8000</span></div>
+        <div class="drink-item"><span class="drink-name">Infusion</span><div class="drink-dots"></div><span class="drink-price">2500</span></div>
+      </div>
+ 
+      <div class="drinks-panel" style="margin-top:20px;">
+        <div class="panel-heading">Eau Minérale</div>
+        <div class="drink-item"><span class="drink-name">Eau 0.9L</span><div class="drink-dots"></div><span class="drink-price">1800</span></div>
+        <div class="drink-item"><span class="drink-name">Eau (petit)</span><div class="drink-dots"></div><span class="drink-price">1000</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<div class="section-divider"></div>
+ 
+<!-- ══════════════════════ JUS & COCKTAILS ══════════════════════════ -->
+<section id="jus">
+  <div class="section-header">
+    <div class="section-number">06</div>
+    <div class="section-title-group">
+      <div class="section-label">Frais &amp; Naturels</div>
+      <div class="section-title">Jus &amp; Cocktails</div>
+    </div>
+    <div class="section-line"></div>
+  </div>
+ 
+  <div class="cols-layout" style="gap:24px;">
+    <div>
+      <div class="drinks-panel">
+        <div class="panel-heading">Nos Jus</div>
+        <div class="drink-item"><span class="drink-name">Citron</span><div class="drink-dots"></div><span class="drink-price">3000</span></div>
+        <div class="drink-item"><span class="drink-name">Citron aux Amande</span><div class="drink-dots"></div><span class="drink-price">4400</span></div>
+        <div class="drink-item"><span class="drink-name">Orange</span><div class="drink-dots"></div><span class="drink-price">3000</span></div>
+        <div class="drink-item"><span class="drink-name">Fraise</span><div class="drink-dots"></div><span class="drink-price">4500</span></div>
+        <div class="drink-item"><span class="drink-name">Banane</span><div class="drink-dots"></div><span class="drink-price">5000</span></div>
+        <div class="drink-item"><span class="drink-name">Banane / Date</span><div class="drink-dots"></div><span class="drink-price">5000</span></div>
+        <div class="drink-item"><span class="drink-name">Banane / Kiwi</span><div class="drink-dots"></div><span class="drink-price">5000</span></div>
+        <div class="drink-item"><span class="drink-name">Kiwi</span><div class="drink-dots"></div><span class="drink-price">5000</span></div>
+      </div>
+    </div>
+ 
+    <div>
+      <div class="drinks-panel">
+        <div class="panel-heading">Nos Cocktails</div>
+        <div class="drink-item"><span class="drink-name">Fraise / Banane / Kiwi</span><div class="drink-dots"></div><span class="drink-price">6500</span></div>
+        <div class="drink-item"><span class="drink-name">After Love</span><div class="drink-dots"></div><span class="drink-price">5500</span></div>
+        <div class="drink-item"><span class="drink-name">Sun Rise</span><div class="drink-dots"></div><span class="drink-price">5500</span></div>
+        <div class="drink-item"><span class="drink-name">Pina Cola</span><div class="drink-dots"></div><span class="drink-price">6000</span></div>
+        <div class="drink-item"><span class="drink-name">Amour</span><div class="drink-dots"></div><span class="drink-price">5000</span></div>
+        <div class="drink-item"><span class="drink-name">Notre Damme</span><div class="drink-dots"></div><span class="drink-price">6000</span></div>
+        <div class="drink-item"><span class="drink-name">KocKtail MAC <span class="tag tag-pop">SIGNATURE</span></span><div class="drink-dots"></div><span class="drink-price">10000</span></div>
+      </div>
+ 
+      <div class="drinks-panel" style="margin-top:20px;">
+        <div class="panel-heading">Mojitos</div>
+        <div class="drink-item"><span class="drink-name">Virgin Mojitos</span><div class="drink-dots"></div><span class="drink-price">4500</span></div>
+        <div class="drink-item"><span class="drink-name">Strawberry Mojitos</span><div class="drink-dots"></div><span class="drink-price">5500</span></div>
+        <div class="drink-item"><span class="drink-name">Bleu Mojitos</span><div class="drink-dots"></div><span class="drink-price">5500</span></div>
+        <div class="drink-item"><span class="drink-name">Energetic Mojitos <span class="tag tag-hot">HOT</span></span><div class="drink-dots"></div><span class="drink-price">7000</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<div class="section-divider"></div>
+ 
+<!-- ══════════════════════ GLACES & CRÊPES ══════════════════════════ -->
+<section id="glaces">
+  <div class="section-header">
+    <div class="section-number">07</div>
+    <div class="section-title-group">
+      <div class="section-label">Sucreries</div>
+      <div class="section-title">Glaces &amp; Crêpes</div>
+    </div>
+    <div class="section-line"></div>
+  </div>
+ 
+  <div class="grid-3">
+    <!-- Glaces -->
+    <div class="drinks-panel">
+      <div class="panel-heading">Glaces</div>
+      <div class="drink-item"><span class="drink-name">Glace 2 Boules</span><div class="drink-dots"></div><span class="drink-price">3000</span></div>
+      <div class="drink-item"><span class="drink-name">Glace 3 Boules</span><div class="drink-dots"></div><span class="drink-price">4000</span></div>
+      <div class="drink-item"><span class="drink-name">Glace MAC <span class="tag tag-pop">SIGNATURE</span></span><div class="drink-dots"></div><span class="drink-price">6000</span></div>
+    </div>
+ 
+    <!-- Crêpes Sucrées -->
+    <div class="drinks-panel">
+      <div class="panel-heading">Crêpes Sucrées</div>
+      <div class="drink-item"><span class="drink-name">Crêpe Chocolat</span><div class="drink-dots"></div><span class="drink-price">3000</span></div>
+      <div class="drink-item"><span class="drink-name">Chocolat · Banane</span><div class="drink-dots"></div><span class="drink-price">4000</span></div>
+      <div class="drink-item"><span class="drink-name">Crêpe MAC <span class="tag tag-pop">SIGNATURE</span></span><div class="drink-dots"></div><span class="drink-price">6000</span></div>
+    </div>
+ 
+    <!-- Info bloc -->
+    <div style="background:var(--orange-dim);border:1px solid rgba(255,107,26,0.25);border-radius:14px;padding:26px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:12px;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:3.5rem;color:var(--orange);line-height:1;letter-spacing:0.05em;">MAC</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--text);font-style:italic;">Le Goût des Crêpes</div>
+      <div style="font-size:0.75rem;color:var(--muted);line-height:1.6;">KASSERINE · Tunisie<br>☎ 22688998</div>
+      <div style="font-size:0.7rem;letter-spacing:0.2em;color:var(--orange);text-transform:uppercase;margin-top:8px;">M.A.C FOOD</div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ══════════════════════ FOOTER ══════════════════════════ -->
+<footer>
+  <div class="footer-brand">MAC FOOD</div>
+  <div class="footer-info">Resto café · KASSERINE, Tunisie</div>
+  <div class="footer-contact">
+    <span><span class="icon">📞</span> 22688998</span>
+    <span><span class="icon">📘</span> M.A.C FOOD</span>
+    <span><span class="icon">📸</span> MAC FOOD</span>
+  </div>
+  <div style="margin-top:32px;font-size:0.65rem;color:var(--border);letter-spacing:0.3em;text-transform:uppercase;">
+    © 2026 MAC Food — Tous droits réservés
+  </div>
+</footer>
+ 
+<script>
+  // Intersection Observer for fade-in animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+        e.target.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      }
+    });
+  }, { threshold: 0.1 });
+ 
+  document.querySelectorAll('.item-card, .pizza-card, .petit-dej-offer, .drinks-panel, .juice-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(16px)';
+    observer.observe(el);
+  });
+ 
+  // Active nav link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav a');
+ 
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 120) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--orange)' : '';
+      a.style.borderBottomColor = a.getAttribute('href') === '#' + current ? 'var(--orange)' : 'transparent';
+    });
+  });
+</script>
+ 
+</body>
+</html>
